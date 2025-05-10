@@ -15785,6 +15785,10 @@
   variants: function
   tags: pointwise
 
+- func: nat_attn(Tensor q, Tensor k, Tensor v) -> (Tensor, Tensor)
+  dispatch:
+    CompositeExplicitAutograd: nat_attn
+
 # Aux function used in the test TestPythonDispatch.test_kwarg_only_and_positional_default
 # within test/test_python_dispatch.py
 - func: _foobar(Tensor self, bool arg1=True, bool arg2=True, *, bool arg3=True) -> Tensor

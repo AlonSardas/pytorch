@@ -346,6 +346,10 @@ TORCH_PRECOMPUTE_META_FUNC(cat)(const ITensorListRef& tensors, int64_t dim) {
 
 namespace at::native {
 
+Tensor nat_attn123123(const Tensor &q, const Tensor & k, const Tensor & v){
+    return at::empty(0);
+}
+
 DEFINE_DISPATCH(cat_serial_stub);
 DEFINE_DISPATCH(stack_serial_stub);
 

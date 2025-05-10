@@ -3188,6 +3188,20 @@
 - name: special_spherical_bessel_j0(Tensor x) -> Tensor
   x: non_differentiable
 
+- name: nat_attn(Tensor q, Tensor k, Tensor v) -> (Tensor, Tensor)
+  # q: grads[0].matmul(v.t()) * (1-result1.pow(2)) + matmul(grads[1]*(1-result1.pow(2)),  k)
+  # q: grads[0].matmul(v.t())+0*grads[1]
+  # q: zeros_like(grads[0]+grads[1])
+  # q: grads[1].matmul(v.t()) + grads[0][0,0]
+  q: matmul(matmul(grad, v.t()) * (1-result1.pow(2)), k)
+  k: matmul((matmul(grad, v.t()) * (1-result1.pow(2))).t(), q)
+  v: matmul(result1.t(), grad)
+
+  # ,{-2, -2, grad.shape[1]
+  # q: at::tensor({-1, -1, grad.shape[0]})
+  # q: at::tensor({{1,2,3}, {4,5,6}})  # Doesn't work...
+  # q: at::stack({at::tensor({int(grad.sym_size(0).as_int_unchecked()), int(v.sym_size(0).as_int_unchecked()), int(q.sym_size(0).as_int_unchecked())}), at::tensor({int(grad.sym_size(1).as_int_unchecked()), int(v.sym_size(1).as_int_unchecked()), int(q.sym_size(1).as_int_unchecked())})})
+
 - name: _reshape_copy(Tensor self, SymInt[] size) -> Tensor
   self: grad.reshape_symint(self.sym_sizes())
   result: auto_linear
